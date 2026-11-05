@@ -1,6 +1,8 @@
+import csv
+import io
 import sqlite3
 
-from flask import Blueprint, jsonify, render_template, request
+from flask import Blueprint, Response, jsonify, render_template, request
 
 from .db import get_db
 from .services import CLAIM_STATUSES, calculate_premium, is_valid_email
@@ -161,3 +163,20 @@ def stats():
         "claims_approved": one("SELECT COUNT(*) FROM claims WHERE status='approved'"),
         "approved_total": one("SELECT COALESCE(SUM(amount),0) FROM claims WHERE status='approved'"),
     })
+
+# ---- Export ----------------------------------------------------------------
+@bp.get("/api/claims/export.csv")
+def export_claims():
+    cur = get_db().execute(
+        "SELECT c.id, m.name, c.description, c.amount, c.status, c.created_at "
+        "FROM claims c JOIN members m ON m.id = c.member_id ORDER BY c.id"
+    )
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(["id", "member", "description", "amount", "status", "created_at"])
+    writer.writerows([tuple(r) for r in cur.fetchall()])
+    return Response(
+        buf.getvalue(),
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment; filename=claims.csv"},
+    )

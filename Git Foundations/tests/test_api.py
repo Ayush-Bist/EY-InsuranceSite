@@ -47,3 +47,13 @@ def test_delete_member_removes_claims(client, member):
         "member_id": member["id"], "description": "Checkup", "amount": 50})
     assert client.delete(f"/api/members/{member['id']}").status_code == 204
     assert client.get("/api/claims").get_json() == []
+
+def test_export_claims_csv(client, member):
+    client.post("/api/claims", json={
+        "member_id": member["id"], "description": "Knee X-ray", "amount": 1200})
+    res = client.get("/api/claims/export.csv")
+    assert res.status_code == 200
+    assert res.content_type.startswith("text/csv")
+    lines = res.data.decode().splitlines()
+    assert lines[0] == "id,member,description,amount,status,created_at"
+    assert "Knee X-ray" in lines[1]
