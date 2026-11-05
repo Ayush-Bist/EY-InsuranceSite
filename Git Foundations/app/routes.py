@@ -95,6 +95,21 @@ def delete_member(member_id):
         return error("Member not found.", 404)
     return "", 204
 
+@bp.patch("/api/members/<int:member_id>")
+def update_member(member_id):
+    try:
+        plan_id = int((request.get_json(silent=True) or {}).get("plan_id"))
+    except (TypeError, ValueError):
+        return error("Choose a plan.")
+    db = get_db()
+    if db.execute("SELECT 1 FROM plans WHERE id = ?", (plan_id,)).fetchone() is None:
+        return error("Plan not found.", 404)
+    cur = db.execute("UPDATE members SET plan_id = ? WHERE id = ?", (plan_id, member_id))
+    db.commit()
+    if cur.rowcount == 0:
+        return error("Member not found.", 404)
+    return jsonify({"id": member_id, "plan_id": plan_id})
+
 
 # ---- Claims ----------------------------------------------------------------
 @bp.get("/api/claims")
