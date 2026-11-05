@@ -80,7 +80,8 @@ async function loadMembers() {
 }
 
 async function loadClaims() {
-  const claims = await api("/api/claims");
+  const qs = new URLSearchParams({ q: $("#claim-q").value, status: $("#claim-status").value });
+  const claims = await api("/api/claims?" + qs);
   $("#claim-empty").hidden = claims.length > 0;
   $("#claim-rows").replaceChildren(...claims.map((c) => {
     const actions = el("div", { className: "review" });

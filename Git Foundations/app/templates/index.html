@@ -71,6 +71,17 @@
         <label>Amount <input type="number" name="amount" min="1" step="0.01" required></label>
         <button type="submit">File claim</button>
       </form>
+            <div class="panel inline">
+        <label>Search <input id="claim-q" placeholder="Member or treatment"></label>
+        <label>Status
+          <select id="claim-status">
+            <option value="">All</option>
+            <option value="pending">pending</option>
+            <option value="approved">approved</option>
+            <option value="rejected">rejected</option>
+          </select>
+        </label>
+      </div>
       <table>
         <thead><tr><th>Member</th><th>Description</th><th>Amount</th><th>Status</th><th>Review</th></tr></thead>
         <tbody id="claim-rows"></tbody>
