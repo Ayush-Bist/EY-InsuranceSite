@@ -47,3 +47,19 @@ def test_delete_member_removes_claims(client, member):
         "member_id": member["id"], "description": "Checkup", "amount": 50})
     assert client.delete(f"/api/members/{member['id']}").status_code == 204
     assert client.get("/api/claims").get_json() == []
+
+def test_change_member_plan(client, member):
+    res = client.patch(f"/api/members/{member['id']}", json={"plan_id": 2})
+    assert res.status_code == 200
+    members = client.get("/api/members").get_json()
+    assert members[0]["plan_name"] == "Balanced"
+
+
+def test_change_member_plan_unknown_plan(client, member):
+    res = client.patch(f"/api/members/{member['id']}", json={"plan_id": 99})
+    assert res.status_code == 404
+
+
+def test_change_plan_unknown_member(client):
+    res = client.patch("/api/members/999", json={"plan_id": 2})
+    assert res.status_code == 404
