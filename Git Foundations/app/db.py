@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS claims (
     description TEXT NOT NULL,
     amount REAL NOT NULL,
     status TEXT NOT NULL DEFAULT 'pending',
+    reason TEXT,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 """

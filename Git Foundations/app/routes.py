@@ -101,11 +101,10 @@ def delete_member(member_id):
 def list_claims():
     cur = get_db().execute(
         "SELECT c.id, c.member_id, m.name AS member_name, c.description, "
-        "c.amount, c.status, c.created_at FROM claims c "
+        "c.amount, c.status, c.reason, c.created_at FROM claims c "
         "JOIN members m ON m.id = c.member_id ORDER BY c.id DESC"
     )
     return jsonify(rows(cur))
-
 
 @bp.post("/api/claims")
 def create_claim():
@@ -139,11 +138,18 @@ def create_claim():
 
 @bp.patch("/api/claims/<int:claim_id>")
 def update_claim(claim_id):
-    status = (request.get_json(silent=True) or {}).get("status")
+    body = request.get_json(silent=True) or {}
+    status = body.get("status")
+    reason = (body.get("reason") or "").strip()
     if status not in CLAIM_STATUSES:
         return error("Status must be one of: " + ", ".join(CLAIM_STATUSES) + ".")
+    if status == "rejected" and not reason:
+        return error("Give a reason for rejecting the claim.")
     db = get_db()
-    cur = db.execute("UPDATE claims SET status = ? WHERE id = ?", (status, claim_id))
+    cur = db.execute(
+        "UPDATE claims SET status = ?, reason = ? WHERE id = ?",
+        (status, reason or None, claim_id),
+    )
     db.commit()
     if cur.rowcount == 0:
         return error("Claim not found.", 404)
