@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# App data (never commit local databases)
+instance/
+*.db
+*.sqlite3
+
+# Environment and editors
+.env
+.vscode/
+.idea/
+.DS_Store

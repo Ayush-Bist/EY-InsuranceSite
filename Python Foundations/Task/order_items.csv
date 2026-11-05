@@ -1,0 +1,12 @@
+id,order_id,product_name,category,quantity,price
+1,1,Wireless Headphones,Electronics,1,180.0
+2,1,USB Cable,Accessories,2,20.0
+3,2,Phone Case,Accessories,3,15.0
+4,2,Bluetooth Speaker,Electronics,1,45.0
+5,3,Smart Watch,Electronics,1,120.0
+6,4,Bluetooth Speaker,Electronics,1,45.0
+7,4,USB Cable,Accessories,2,20.0
+8,4,Phone Case,Accessories,4,15.0
+9,5,Smart Watch,Electronics,2,120.0
+10,6,Wireless Headphones,Electronics,3,80.0
+11,7,USB Cable,Accessories,3,10.0

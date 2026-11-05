@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Insurance Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <aside class="side">
+    <h1 class="brand"><span class="mark" aria-hidden="true"></span>Insurance Manager</h1>
+    <nav aria-label="Main">
+      <a href="#overview" data-view="overview">Overview</a>
+      <a href="#plans" data-view="plans">Plans and quotes</a>
+      <a href="#members" data-view="members">Members</a>
+      <a href="#claims" data-view="claims">Claims</a>
+    </nav>
+  </aside>
+
+  <main>
+    <div id="toast" role="status" aria-live="polite"></div>
+
+    <section id="overview" class="view">
+      <h2>Overview</h2>
+      <div class="stats">
+        <div><span id="s-members">0</span><p>Members</p></div>
+        <div><span id="s-pending">0</span><p>Claims waiting for review</p></div>
+        <div><span id="s-approved">0</span><p>Claims approved</p></div>
+        <div><span id="s-total">0</span><p>Paid out so far</p></div>
+      </div>
+      <p class="hint">Add a member, file a claim, then approve it to see these numbers change.</p>
+    </section>
+
+    <section id="plans" class="view">
+      <h2>Plans and quotes</h2>
+      <div id="plan-list" class="plan-list"></div>
+      <form id="quote-form" class="panel">
+        <h3>Get a monthly quote</h3>
+        <label>Age <input type="number" name="age" min="18" max="100" value="30" required></label>
+        <label>Plan <select name="plan_id" class="plan-select" required></select></label>
+        <label class="check"><input type="checkbox" name="smoker"> Smoker</label>
+        <button type="submit">Calculate quote</button>
+        <p id="quote-result" class="result" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section id="members" class="view">
+      <h2>Members</h2>
+      <form id="member-form" class="panel inline">
+        <label>Full name <input name="name" required></label>
+        <label>Email <input type="email" name="email" required></label>
+        <label>Age <input type="number" name="age" min="18" max="100" required></label>
+        <label>Plan <select name="plan_id" class="plan-select" required></select></label>
+        <button type="submit">Add member</button>
+      </form>
+      <table>
+        <thead><tr><th>Name</th><th>Email</th><th>Age</th><th>Plan</th><th></th></tr></thead>
+        <tbody id="member-rows"></tbody>
+      </table>
+      <p id="member-empty" class="hint" hidden>No members yet. Add the first one above.</p>
+    </section>
+
+    <section id="claims" class="view">
+      <h2>Claims</h2>
+      <form id="claim-form" class="panel inline">
+        <label>Member <select name="member_id" id="claim-member" required></select></label>
+        <label>Treatment or service <input name="description" required></label>
+        <label>Amount <input type="number" name="amount" min="1" step="0.01" required></label>
+        <button type="submit">File claim</button>
+      </form>
+      <table>
+        <thead><tr><th>Member</th><th>Description</th><th>Amount</th><th>Status</th><th>Review</th></tr></thead>
+        <tbody id="claim-rows"></tbody>
+      </table>
+      <p id="claim-empty" class="hint" hidden>No claims filed yet.</p>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
