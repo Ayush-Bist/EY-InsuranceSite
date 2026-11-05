@@ -99,12 +99,22 @@ def delete_member(member_id):
 # ---- Claims ----------------------------------------------------------------
 @bp.get("/api/claims")
 def list_claims():
-    cur = get_db().execute(
+    status = request.args.get("status", "")
+    q = request.args.get("q", "").strip()
+    sql = (
         "SELECT c.id, c.member_id, m.name AS member_name, c.description, "
         "c.amount, c.status, c.created_at FROM claims c "
-        "JOIN members m ON m.id = c.member_id ORDER BY c.id DESC"
+        "JOIN members m ON m.id = c.member_id WHERE 1=1"
     )
-    return jsonify(rows(cur))
+    params = []
+    if status in CLAIM_STATUSES:
+        sql += " AND c.status = ?"
+        params.append(status)
+    if q:
+        sql += " AND (m.name LIKE ? OR c.description LIKE ?)"
+        params += [f"%{q}%", f"%{q}%"]
+    sql += " ORDER BY c.id DESC"
+    return jsonify(rows(get_db().execute(sql, params)))
 
 
 @bp.post("/api/claims")
