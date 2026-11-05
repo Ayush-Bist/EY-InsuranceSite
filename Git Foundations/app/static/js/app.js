@@ -73,8 +73,18 @@ async function loadMembers() {
       if (!confirm(`Remove ${m.name} and their claims?`)) return;
       await run(async () => { await api(`/api/members/${m.id}`, { method: "DELETE" }); toast("Member removed."); });
     });
+
+    // NEW: a plan dropdown for this member (5 lines)
+    const planSel = $(".plan-select").cloneNode(true);
+    planSel.value = m.plan_id;
+    planSel.addEventListener("change", () => run(async () => {
+      await api(`/api/members/${m.id}`, { method: "PATCH", body: { plan_id: planSel.value } });
+      toast("Plan updated.");
+    }));
+
     return el("tr", {}, el("td", { textContent: m.name }), el("td", { textContent: m.email }),
-      el("td", { textContent: m.age }), el("td", { textContent: m.plan_name }), el("td", {}, del));
+      // CHANGED: was el("td", { textContent: m.plan_name })
+      el("td", {}, planSel), el("td", {}, del));
   }));
   $("#claim-member").replaceChildren(...members.map((m) => el("option", { value: m.id, textContent: m.name })));
 }
